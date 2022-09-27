@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+   ForbiddenException,
+   Injectable,
+   NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookmarkDto, EditBookmarkDto } from "./dto";
 
@@ -14,13 +18,17 @@ export class BookmarkService {
       });
    }
 
-   getBookmarkById(userId: number, bookmarkId: number) {
-      return this.prisma.bookmark.findFirst({
+   async getBookmarkById(userId: number, bookmarkId: number) {
+      const bookmark = await this.prisma.bookmark.findFirst({
          where: {
             userId,
             id: bookmarkId,
          },
       });
+
+      if (bookmark === null) throw new NotFoundException();
+
+      return bookmark;
    }
 
    createBookmark(userId: number, dto: CreateBookmarkDto) {
@@ -37,15 +45,17 @@ export class BookmarkService {
       bookmarkId: number,
       dto: EditBookmarkDto,
    ) {
-      // get the bookmark by id
       const bookmark = await this.prisma.bookmark.findUnique({
          where: {
             id: bookmarkId,
          },
       });
 
-      // check if user owns the bookmark
-      if (!bookmark || bookmark.userId !== userId) {
+      if (bookmark === null) {
+         throw new NotFoundException();
+      }
+
+      if (bookmark.userId !== userId) {
          throw new ForbiddenException("Access to resources denied");
       }
 
@@ -60,15 +70,17 @@ export class BookmarkService {
    }
 
    async deleteBookmarkById(userId: number, bookmarkId: number) {
-      // get the bookmark by id
       const bookmark = await this.prisma.bookmark.findUnique({
          where: {
             id: bookmarkId,
          },
       });
 
-      // check if user owns the bookmark
-      if (!bookmark || bookmark.userId !== userId) {
+      if (bookmark === null) {
+         throw new NotFoundException();
+      }
+
+      if (bookmark.userId !== userId) {
          throw new ForbiddenException("Access to resources denied");
       }
 
