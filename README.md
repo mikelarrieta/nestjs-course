@@ -3,6 +3,8 @@ REST API for managing users and their bookmarks, built using `Nest`, with `Types
 
 Built following the course [NestJs Course for Beginners - Create a REST API](https://www.youtube.com/watch?v=GHTA143_b-s) of freeCodeCamp.
 
+Postman collections are included in the [*postman*](./postman/) folder.
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
